@@ -1,0 +1,11 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="ElementCoordinateExtractor.csproj">
+    <Platform Project="x64" />
+  </Project>
+  <Project Path="Installer/BIMToolsInstaller.csproj">
+    <Platform Project="x64" />
+  </Project>
+</Solution>

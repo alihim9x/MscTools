@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>MscTool</Name>
+    <Assembly>c:\Users\924002\OneDrive - Haskoning\Desktop\Addin Revit\bin\2027\Debug\MscTool.dll</Assembly>
+    <AddInId>8F9E2A34-5B6C-4D7E-8F90-1A2B3C4D5E6F</AddInId>
+    <FullClassName>ElementCoordinateExtractor.App</FullClassName>
+    <VendorId>HASKONING</VendorId>
+    <VendorDescription>Royal HaskoningDHV MscTool</VendorDescription>
+  </AddIn>
+</RevitAddIns>

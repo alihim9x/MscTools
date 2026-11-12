@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RevitVersion Condition="'$(RevitVersion)' == ''">2025</RevitVersion>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
+    <OutputPath>bin\$(RevitVersion)\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <AssemblyName>MscTool</AssemblyName>
+    <RootNamespace>ElementCoordinateExtractor</RootNamespace>
+    <RevitAddinsDir>$([System.Environment]::GetEnvironmentVariable('APPDATA'))\Autodesk\Revit\Addins\$(RevitVersion)\</RevitAddinsDir>
+  </PropertyGroup>
+
+  <!-- Exclude sub-projects and output folders from this project -->
+  <ItemGroup>
+    <Compile Remove="Installer\**" />
+    <Page Remove="Installer\**" />
+    <Resource Remove="Installer\**" />
+    <None Remove="Installer\**" />
+    <Compile Remove="release\**" />
+    <Page Remove="release\**" />
+    <Resource Remove="release\**" />
+    <None Remove="release\**" />
+    <Compile Remove="scratch\**" />
+    <Page Remove="scratch\**" />
+    <Resource Remove="scratch\**" />
+    <None Remove="scratch\**" />
+  </ItemGroup>
+
+  <!-- Revit API references dynamically resolved based on $(RevitVersion) -->
+  <ItemGroup>
+    <Reference Include="RevitAPI">
+      <HintPath>C:\Program Files\Autodesk\Revit $(RevitVersion)\RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>C:\Program Files\Autodesk\Revit $(RevitVersion)\RevitAPIUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Auto copy to bin\Debug (backward compatibility for 2025) and deploy .addin manifest -->
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <!-- Backward compatibility copy for 2025 to bin\Debug -->
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(ProjectDir)bin\Debug\" Condition="'$(RevitVersion)' == '2025'" ContinueOnError="true" Retries="0" />
+    <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(ProjectDir)bin\Debug\" Condition="'$(RevitVersion)' == '2025' and Exists('$(TargetDir)$(TargetName).pdb')" ContinueOnError="true" Retries="0" />
+
+    <!-- Deploy .addin to %APPDATA%\Autodesk\Revit\Addins\2025\ -->
+    <Copy SourceFiles="$(ProjectDir)MscTool.addin" DestinationFolder="$(RevitAddinsDir)" Condition="'$(RevitVersion)' == '2025' and Exists('$(ProjectDir)MscTool.addin')" ContinueOnError="true" Retries="0" />
+
+    <!-- Deploy .addin to %APPDATA%\Autodesk\Revit\Addins\2027\ -->
+    <Copy SourceFiles="$(ProjectDir)MscTool.2027.addin" DestinationFiles="$(RevitAddinsDir)MscTool.addin" Condition="'$(RevitVersion)' == '2027' and Exists('$(ProjectDir)MscTool.2027.addin')" ContinueOnError="true" Retries="0" />
+  </Target>
+
+  <!-- When building Revit 2025 directly, automatically build Revit 2027 so both versions are always kept up-to-date -->
+  <Target Name="BuildRevit2027" AfterTargets="Build" Condition="'$(RevitVersion)' == '2025' and '$(BuildingChildRevit)' != 'true'">
+    <MSBuild Projects="$(MSBuildProjectFullPath)"
+             Properties="RevitVersion=2027;BuildingChildRevit=true;Configuration=$(Configuration);Platform=$(Platform)"
+             ContinueOnError="true" />
+  </Target>
+
+</Project>

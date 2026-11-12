@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>MscTool</AssemblyName>
+    <RootNamespace>MscToolsInstaller</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <Platforms>x64</Platforms>
+    <OutputPath>..\bin\Installer\$(Configuration)\</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <!-- Embed payload DLLs so the installer is 100% self-contained in a single executable -->
+  <ItemGroup>
+    <EmbeddedResource Include="..\bin\2025\Debug\MscTool.dll" Link="Payload\Revit2025\MscTool.dll" Condition="Exists('..\bin\2025\Debug\MscTool.dll')" />
+    <EmbeddedResource Include="..\bin\2027\Debug\MscTool.dll" Link="Payload\Revit2027\MscTool.dll" Condition="Exists('..\bin\2027\Debug\MscTool.dll')" />
+  </ItemGroup>
+
+</Project>

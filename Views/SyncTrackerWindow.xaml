@@ -1,0 +1,218 @@
+<Window x:Class="ElementCoordinateExtractor.Views.SyncTrackerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Revit Sync Tracker - Giám Sát Thay Đổi Khi Đồng Bộ" 
+        Height="700" Width="1080"
+        WindowStartupLocation="CenterScreen"
+        FontFamily="Segoe UI" FontSize="13"
+        Background="#F4F5F7">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#C1C7D0"/>
+            <Setter Property="Background" Value="#FFFFFF"/>
+            <Setter Property="Foreground" Value="#172B4D"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#EBECF0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#0052CC"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#0052CC"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0747A6"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SuccessButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Background" Value="#00875A"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
+            <Setter Property="BorderBrush" Value="#00875A"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#006644"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="RadioButton">
+            <Setter Property="Margin" Value="0,0,14,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- TOP SUMMARY BANNER -->
+        <Border Grid.Row="0" Background="#FFFFFF" Padding="14" CornerRadius="6" Margin="0,0,0,10" BorderBrush="#DFE1E6" BorderThickness="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Model info & timestamp -->
+                <Grid Grid.Row="0" Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <TextBlock Text="🔄 Báo Cáo Thay Đổi Sau Đồng Bộ:" FontWeight="Bold" FontSize="15" Foreground="#0747A6" Margin="0,0,8,0"/>
+                        <TextBlock x:Name="TxtModelTitle" Text="ModelName.rvt" FontWeight="SemiBold" FontSize="15" Foreground="#172B4D"/>
+                    </StackPanel>
+
+                    <TextBlock x:Name="TxtSyncTimestamp" Grid.Column="1" Text="Thời gian: 2026-11-10 09:45:00" Foreground="#5E6C84" VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- Stat Cards -->
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Added Card -->
+                    <Border Grid.Column="0" Background="#E3FCEF" Padding="10" CornerRadius="4" Margin="0,0,6,0">
+                        <StackPanel>
+                            <TextBlock Text="THÊM MỚI (ADDED)" FontSize="11" FontWeight="Bold" Foreground="#006644"/>
+                            <TextBlock x:Name="TxtCountAdded" Text="0 đối tượng" FontSize="16" FontWeight="Bold" Foreground="#00875A" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Modified Card -->
+                    <Border Grid.Column="1" Background="#FFF0B3" Padding="10" CornerRadius="4" Margin="3,0,3,0">
+                        <StackPanel>
+                            <TextBlock Text="CHỈNH SỬA (MODIFIED)" FontSize="11" FontWeight="Bold" Foreground="#B76E00"/>
+                            <TextBlock x:Name="TxtCountModified" Text="0 đối tượng" FontSize="16" FontWeight="Bold" Foreground="#FF8B00" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Deleted Card -->
+                    <Border Grid.Column="2" Background="#FFEBE6" Padding="10" CornerRadius="4" Margin="3,0,3,0">
+                        <StackPanel>
+                            <TextBlock Text="ĐÃ XÓA (DELETED)" FontSize="11" FontWeight="Bold" Foreground="#BF2600"/>
+                            <TextBlock x:Name="TxtCountDeleted" Text="0 đối tượng" FontSize="16" FontWeight="Bold" Foreground="#DE350B" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Colleagues Card -->
+                    <Border Grid.Column="3" Background="#DEEBFF" Padding="10" CornerRadius="4" Margin="6,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="TỪ ĐỒNG NGHIỆP" FontSize="11" FontWeight="Bold" Foreground="#0747A6"/>
+                            <TextBlock x:Name="TxtCountColleagues" Text="0 đối tượng" FontSize="16" FontWeight="Bold" Foreground="#0052CC" Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <!-- FILTER & SEARCH BAR -->
+        <Border Grid.Row="1" Background="#FFFFFF" Padding="12" CornerRadius="6" Margin="0,0,0,10" BorderBrush="#DFE1E6" BorderThickness="1">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="220"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Tìm kiếm:" VerticalAlignment="Center" Margin="0,0,8,0" FontWeight="SemiBold"/>
+                <TextBox x:Name="TxtSearch" Grid.Column="1" Height="28" VerticalContentAlignment="Center" Padding="4,0" TextChanged="TxtSearch_TextChanged"/>
+
+                <TextBlock Grid.Column="2" Text="Lọc dữ liệu:" VerticalAlignment="Center" Margin="16,0,8,0" FontWeight="SemiBold"/>
+                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                    <RadioButton x:Name="RbFilterAll" Content="Tất cả" IsChecked="True" Checked="Filter_Checked"/>
+                    <RadioButton x:Name="RbFilterColleagues" Content="👥 Từ đồng nghiệp" Checked="Filter_Checked"/>
+                    <RadioButton x:Name="RbFilterMine" Content="👤 Của bạn" Checked="Filter_Checked"/>
+                    <RadioButton x:Name="RbFilterAdded" Content="🟢 Thêm mới" Checked="Filter_Checked"/>
+                    <RadioButton x:Name="RbFilterModified" Content="🟡 Chỉnh sửa" Checked="Filter_Checked"/>
+                    <RadioButton x:Name="RbFilterDeleted" Content="🔴 Đã xóa" Checked="Filter_Checked"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- CENTER DATAGRID -->
+        <Border Grid.Row="2" Background="#FFFFFF" CornerRadius="6" BorderBrush="#DFE1E6" BorderThickness="1">
+            <DataGrid x:Name="DgrChanges" 
+                      AutoGenerateColumns="False" 
+                      IsReadOnly="True" 
+                      CanUserSortColumns="True"
+                      SelectionMode="Extended"
+                      GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="#EBECF0"
+                      HeadersVisibility="Column"
+                      RowBackground="#FFFFFF"
+                      AlternatingRowBackground="#FAFBFC"
+                      BorderThickness="0"
+                      MouseDoubleClick="DgrChanges_MouseDoubleClick"
+                      SelectionChanged="DgrChanges_SelectionChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Element ID" Binding="{Binding ElementId}" Width="100"/>
+                    
+                    <!-- Badge Column -->
+                    <DataGridTemplateColumn Header="Loại Thay Đổi" Width="120">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="3" Padding="6,2" HorizontalAlignment="Left" Background="#F4F5F7">
+                                    <TextBlock Text="{Binding ChangeTypeBadge}" FontWeight="Bold" Foreground="{Binding ChangeTypeColor}"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Header="Category" Binding="{Binding CategoryName}" Width="140"/>
+                    <DataGridTextColumn Header="Tên Đối Tượng" Binding="{Binding ElementName}" Width="*"/>
+                    <DataGridTextColumn Header="Type Name" Binding="{Binding TypeName}" Width="150"/>
+                    <DataGridTextColumn Header="Người Sửa Gần Nhất" Binding="{Binding AuthorDisplay}" Width="170"/>
+                    <DataGridTextColumn Header="Người Tạo" Binding="{Binding Creator}" Width="120"/>
+                    <DataGridTextColumn Header="Level" Binding="{Binding LevelName}" Width="90"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- BOTTOM ACTIONS -->
+        <Grid Grid.Row="3" Margin="0,10,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Auto-popup toggle -->
+            <CheckBox x:Name="ChkAutoPopup" Grid.Column="0" Content="Tự động hiện bảng này sau mỗi lần Sync" IsChecked="True" VerticalAlignment="Center" Checked="ChkAutoPopup_Changed" Unchecked="ChkAutoPopup_Changed"/>
+
+            <TextBlock x:Name="TxtStatus" Grid.Column="1" Text="Sẵn sàng." VerticalAlignment="Center" Margin="16,0,0,0" Foreground="#5E6C84"/>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Content="🔍 Zoom &amp; Chọn trong Revit" Click="BtnShowSelected_Click"/>
+                <Button Content="🎨 Tô Màu Nổi Bật (3D)" Style="{StaticResource SuccessButton}" Click="BtnHighlight_Click" ToolTip="Tô màu Xanh lá cho đối tượng Mới, màu Cam cho đối tượng Bị sửa trên 3D View"/>
+                <Button Content="❌ Xóa Tô Màu" Click="BtnResetHighlight_Click" ToolTip="Khôi phục lại màu hiển thị mặc định của đối tượng"/>
+                <Button Content="📁 Mở Thư Mục File Log" Click="BtnOpenLogFolder_Click" ToolTip="Mở thư mục chứa file CSV nhật ký đồng bộ"/>
+                <Button Content="📋 Copy Bảng" Click="BtnCopy_Click"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
